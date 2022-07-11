@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiAndjQuery", "ApiAndjQuery\ApiAndjQuery.csproj", "{86C1CB9E-EC39-4015-BC00-786C8094A226}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86C1CB9E-EC39-4015-BC00-786C8094A226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86C1CB9E-EC39-4015-BC00-786C8094A226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86C1CB9E-EC39-4015-BC00-786C8094A226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86C1CB9E-EC39-4015-BC00-786C8094A226}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {06D41728-2862-4CDD-9379-AD93274AEECB}
+	EndGlobalSection
+EndGlobal

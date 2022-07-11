@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Reservation</title>
+    
+        <style>
+            /* For jQuery Reservation Test*/
+            ul {
+                padding: 0;
+            }
+
+                ul li {
+                    list-style-type: none;
+                    background: #EFEFEF;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                }
+
+
+                    ul li .edit {
+                        display: none;
+                    }
+
+                        ul li.edit .edit {
+                            display: initial;
+                        }
+
+                        ul li.edit .noedit {
+                            display: none;
+                        }
+        </style>
+   
+</head>
+<body>
+    <div class="row">
+        <div >
+            <h3>Reservation</h3>
+            <br />
+            <ul id="reservations"></ul>
+            <template id="reservation-template">
+                <li data-id="{{id}}">
+                    <p>
+                        <strong>Name:</strong>
+                        <span class="noedit name">{{name}}</span>
+                        <input class="edit name" value="name" />
+                    </p>
+                    <p>
+                        <strong>Start Location:</strong>
+                        <span class="noedit startLocation">{{startLocation}}</span>
+                        <input class="edit startLocation" value="startLocation" />
+                    </p>
+                    <p>
+                        <strong>End Location:</strong>
+                        <span class="noedit endLocation">{{endLocation}}</span>
+                        <input class="edit endLocation" value="endLocation" />
+                    </p>
+                    <p>
+                        <button data-id='{{id}}' class='remove'>X</button>
+                        <button class="editReservation noedit">Edit</button>
+                        <button class="saveEdit edit">Save</button>
+                        <button class="cancelEdit edit">Cancel</button>
+                    </p>
+
+                </li>
+            </template>
+            <h4>Add a Reservation</h4>
+            <p>Name : <input type="text" id="name" /></p>
+            <p>Start Location : <input type="text" id="startLocation" /></p>
+            <p>End Location : <input type="text" id="endLocation" /></p>
+            <button id="add-reservation">Add!</button>
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/jquery-migrate-3.4.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.js"></script>
+</body>
+</html>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            var $reservations = $('#reservations');
+            var $name = $('#name');
+            var $startlocation = $('#startLocation');
+            var $endlocation = $('#endLocation');
+
+            var reservationTemplate = $('#reservation-template').html();
+
+            function AddReservation(reservation) {
+                $reservations.append(Mustache.render(reservationTemplate, reservation));
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: '/api/Reservations/',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (reservations) {
+                    //alert(JSON.stringify(reservations));
+                    $.each(reservations, function (i, reservation) {
+                        AddReservation(reservation);
+                    });
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                },
+            });
+
+            $('#add-reservation').on('click', function () {
+                var reserv = { name: $name.val(), startlocation: $startlocation.val(), endlocation: $endlocation.val() };
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/Reservations/',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(reserv),
+                    success: function(newReservation) {
+                        AddReservation(newReservation);
+                    },
+                    error: function (e) {
+                        alert(e.responseText);
+                    },
+                });
+            });
+
+            $reservations.delegate('.remove', 'click', function () {
+                var $li = $(this).closest('li');
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/api/Reservations/' + $(this).attr('data-id'),
+                    success: function () {
+                        $li.fadeOut(300, function () {
+                            $(this).remove();
+                        });
+                    },
+                    error: function (e) {
+                        alert(e.responseText);
+                    },
+                });
+            });
+
+            $reservations.delegate('.editReservation', 'click', function () {
+                var $li = $(this).closest('li');
+                $li.find('input.name').val($li.find('span.name').html());
+                $li.find('input.startLocation').val($li.find('span.startLocation').html());
+                $li.find('input.endLocation').val($li.find('span.endLocation').html());
+                $li.addClass('edit');
+            });
+
+            $reservations.delegate('.cancelEdit', 'click', function () {
+                $(this).closest('li').removeClass('edit');
+            });
+
+            $reservations.delegate('.saveEdit', 'click', function () {
+                var $li = $(this).closest('li');
+                var reservation = {
+                    Id: $li.attr('data-id'),
+                    name: $li.find('input.name').val(),
+                    startLocation: $li.find('input.startLocation').val(),
+                    endLocation: $li.find('input.endLocation').val(),
+                };
+                
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/Reservations/' + $li.attr('data-id'),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: JSON.stringify(reservation),
+                    success: function () {
+                        data: JSON.stringify(reservation),
+                        
+                        $li.find('span.name').html(reservation.name);
+                        $li.find('span.startLocation').html(reservation.startLocation);
+                        $li.find('span.endLocation').html(reservation.endLocation);
+                        $li.removeClass('edit');
+                    },
+                    error: function (e) {
+                        alert(e.responseText);
+                    },
+                });
+
+            });
+
+
+        });
+    });
+</script>
